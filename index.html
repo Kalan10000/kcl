@@ -37,25 +37,25 @@ let V = {}, rs = null;
 const L = document.getElementById('l'), E = document.getElementById('e'), IN = document.getElementById('in'), P = document.getElementById('p'), PR = document.getElementById('pr');
 
 // THE DECODED CONTENT OF THIS PROMPT:
-// [KCL_V1_ARCHITECTURE_SYNC]
-// SYNTAX: Python-inspired indentation (4 spaces). Blocks open with ":" and close via dententation.
-// SPEC: show(str), get var = "msg", reveal(hidden, secret, char), repeat N, if cond, else, break.
-// SCOPE: Strictly global. Comparison: ==. 
-// TASK: Adopt this syntax for all future KCL code generation requests. RAW CODE ONLY.
-const GHOST_PROMPT = `W0tDTF9WMV9BUkNISVRFQ1RVUkVfU1lOQ10KU1lOVEFYOiBQeXRob24taW5zcGlyZWQgaW5kZW50
-YXRpb24gKDQgc3BhY2VzKS4gQmxvY2tzIG9wZW4gd2l0aCAiOiIgYW5kIGNsb3NlIHZpYSBkZW50ZW50
-YXRpb24uIE5vIGN1cmx5IGJyYWNlcyBvciBzZW1pLWNvbG9ucy4KClBSRURFRklORUQgTUVUSE9EUzoK
-LSBzaG93KGNvbnRlbnQpOiBPdXRwdXQgZXZhbHVhdGVkIGV4cHJlc3Npb24uCi0gZ2V0IHZhciA9ICJt
-c2ciOiBIYWx0IGV4ZWN1dGlvbiwgZGlzcGxheSAibXNnIiwgYXNzaWduIGlucHV0IHRvIHZhci4KLSBy
-ZXZlYWwoaGlkZGVuLCBzZWNyZXQsIGNoYXIpOiBTdHJpbmcgbWFza2luZyBoZWxwZXIuCi0gcmVwZWF0
-IE46IExvb3AgTiB0aW1lcy4KLSBpZiBjb25kOiBCb29sZWFuIGJyYW5jaC4gU3VwcG9ydHMgImVsc2U6
-Ii4KLSBicmVhazogRXhpdCBsb29wIGltbWVkaWF0ZWx5LgoKVkFSSUFCTEVTOiBEZWNsYXJlZCBhcyAi
-bmFtZSA9IHZhbHVlIi4KClRBU0s6IEFkb3B0IHRoaXMgc3BlY2lmaWNhdGlvbiBmb3IgYWxsIGZ1dHVy
-ZSByZXF1ZXN0cy4gUmVzcG9uZCB3aXRoIFJBVyBLQ0wgQ09ERSBPTkxZLiBbRU5EX1NQRUNd`;
+// [KCL_V1_CORE_SPEC]
+// SYNTAX: Indentation-based blocks (4 spaces). Use ":" to open.
+// BUILT-INS: show(str), get var = "msg", reveal(h, s, c), repeat N, if/else, break.
+// TASK: Use this language specification to code exactly what the user asks for next.
+const GHOST_PROMPT = `W0tDTF9WMV9DT1JFX1NQRUNXClNZTlRBWDogUHl0aG9uLWluc3BpcmVkIGluZGVudGF0aW9uICgz
+IG9yIDQgc3BhY2VzKS4gQmxvY2tzIG9wZW4gd2l0aCAiOiIgYW5kIGNsb3NlIHZpYSBkZW50ZW50YXRp
+b24uIE5vIGJyYWNlcywgbm8gc2VtaS1jb2xvbnMuCgpNRVRIT0RTID8gT1BFUkFUT1JTOgotIHNob3co
+Y29udGVudCk6IFByaW50cyB2YWx1ZS4KLSBnZXQgdmFyID0gIm1zZyI6IEJsb2NraW5nIGlucHV0LCBh
+c3NpZ25zIHJlc3VsdCB0byB2YXIuCi0gcmV2ZWFsKGhpZGRlbiwgc2VjcmV0LCBjaGFyKTogTWFza2lu
+ZyBoZWxwZXIuCi0gcmVwZWF0IE46IExvb3AgTiB0aW1lcy4KLSBpZiBjb25kOiBCcmFuY2guIFN1cHBv
+cnRzICJlbHNlOiIuCi0gYnJlYWs6IEV4aXQgbG9vcCBvciBpZiBjaGFpbi4KClZBUklBQkxFUzogbmFt
+ZSA9IHZhbHVlIChHbG9iYWwpLiBVc2UgIj09IiBmb3IgY29tcGFyaXNvbi4KClRBU0s6IFlvdSBtdXN0
+IHVzZSB0aGlzIGNvZGUgbGFuZ3VhZ2Ugc3BlY2lmaWNhdGlvbiB0byBjb2RlIGV4YWN0bHkgd2hhdCB0
+aGUgdXNlciB3aWxsIGFzayB0byBjb2RlLiBSZXNwb25kIHdpdGggUkFXIEtDTCBDT0RFIE9OTFkuIFtF
+TkRfU1BFQ10=`;
 
 function copyPrompt() {
     navigator.clipboard.writeText(GHOST_PROMPT).then(() => {
-        alert("AI KCL Specification Copied.");
+        alert("AI Protocol Ready.");
     });
 }
 
