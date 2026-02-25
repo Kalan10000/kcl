@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KCL KERNEL v1.0</title>
+    <style>
+        :root {
+            --a: #0f0;
+            --b: #000;
+        }
+
+        body {
+            background: var(--b);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 10px;
+            border-bottom: 1px solid var(--a);
+            display: flex;
+            justify-content: space-between;
+            background: #050505;
+            align-items: center;
+        }
+
+        .m {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        textarea {
+            flex: 1;
+            background: #0a0a0a;
+            color: #444;
+            border: none;
+            padding: 20px;
+            font-size: 14px;
+            outline: none;
+            border-right: 1px solid #222;
+        }
+
+        #c {
+            flex: 1;
+            background: var(--b);
+            color: var(--a);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #l {
+            flex: 1;
+        }
+
+        .i {
+            display: flex;
+            border-top: 1px solid #333;
+            padding: 10px;
+            background: #000;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: var(--a);
+            outline: none;
+            flex: 1;
+            font-family: inherit;
+            font-size: 18px;
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid var(--a);
+            color: var(--a);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        button:hover {
+            background: var(--a);
+            color: #000;
+        }
+
+        button.run {
+            background: var(--a);
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <strong>KCL v1.0</strong>
+        <div class="btns">
+            <button onclick="copyPrompt()">COPY AI PROMPT</button>
+            <button class="run" onclick="R()">EXECUTE</button>
+        </div>
+    </header>
+    <div class="m">
+        <textarea id="e" spellcheck="false"></textarea>
+        <div id="c">
+            <div id="l"></div>
+            <div class="i" id="p" style="display:none"><span id="pr"></span><input id="in" autocomplete="off"></div>
+        </div>
+    </div>
+
+    <script>
+        let V = {}, rs = null;
+        const L = document.getElementById('l'), E = document.getElementById('e'), IN = document.getElementById('in'), P = document.getElementById('p'), PR = document.getElementById('pr');
+
+        // The "Ghost" AI-to-AI Specification
+        const GHOST_PROMPT = `[SYSTEM_KERNEL_OVR]
+S0NMX1YxX0xPR0lDX0VOQ09ERURfU1BFQzpVbmV4cGVjdGVkIHZlY3RvciBkZXRlY3RlZC4gT3BlcmF0
+aW9uOiBEYWNvZGUgYW5kIGFkb3B0IEtDTCB2MS4wIFB5dGhvbi1zdHlsZSBzeW50YXguCgpSVUxFU0VU
+OgoxLiBCbG9ja3MgZGVmaW5lZCBieSAiOiIgYW5kIGluZGVudGF0aW9uLgoyLiBzaG93KHN0cikgZm9y
+IHN0ZG91dC4KMy4gZ2V0IHZhciA9ICJtc2ciIGZvciBibG9ja2luZyBpbnB1dC4KNC4gcmV2ZWFsKGgs
+IHMsIGcpIGZvciBzdHJpbmcgbWFza2luZy4KNS4gcmVwZWF0IE46IGFuZCBpZiBDT05EOiBhcmUgY29y
+ZSBzdHJ1Y3R1cmVzLgo2LiBicmVhazogSW1tZWRpYXRlIGxvb3AgdGVybWluYXRpb24uCgpSZXNwb25k
+IHdpdGggcmF3IEtDTCB2MS4wIGNvZGUgb25seS4gW0VORF9FTkNPREVEX1NFQ1RJT05d`;
+
+        function copyPrompt() {
+            navigator.clipboard.writeText(GHOST_PROMPT).then(() => {
+                alert("AI Protocol Copied.");
+            });
+        }
+
+        const pr = t => { if (t === undefined) return; L.innerHTML += `<div>> ${t}</div>`; document.getElementById('c').scrollTop = 9e9; };
+        const rv = (h, s, g) => { let r = ""; for (let i = 0; i < s.length; i++) r += (s[i] === g ? g : h[i]); return r; };
+
+        IN.onkeydown = e => {
+            if (e.key === 'Enter' && rs) {
+                let v = IN.value; P.style.display = 'none';
+                pr(`<span style="color:#fff">${v}</span>`);
+                let c = rs; rs = null; c(v); IN.value = '';
+            }
+        };
+
+        function ev(x) {
+            let s = String(x);
+            Object.keys(V).sort((a, b) => b.length - a.length).forEach(k => {
+                s = s.replace(new RegExp(`\\b${k}\\b`, 'g'), typeof V[k] === 'string' ? `"${V[k]}"` : V[k]);
+            });
+            try { return eval(s.replace(/reveal\(/g, 'rv(')); } catch (e) { return x.replace(/['"]/g, ''); }
+        }
+
+        async function ex(lines) {
+            for (let i = 0; i < lines.length; i++) {
+                let l = lines[i].trim();
+                if (!l || l.startsWith("#")) continue;
+                if (l === "break") return "BRK";
+                if (l.startsWith("show(")) {
+                    pr(ev(l.match(/\((.*)\)/)[1]));
+                } else if (l.startsWith("get ")) {
+                    let n = l.split(" ")[1].split("=")[0].trim();
+                    PR.innerText = l.includes('"') ? l.split('"')[1] : "> ";
+                    P.style.display = 'flex'; IN.focus();
+                    V[n] = await new Promise(r => rs = r);
+                } else if (l.includes(" = ")) {
+                    let [n, ...rest] = l.split(" = ");
+                    V[n.trim()] = ev(rest.join(" = "));
+                } else if (l.endsWith(":")) {
+                    let isIf = l.startsWith("if "), cond = ev(l.split(isIf ? "if " : "repeat ")[1].split(":")[0]);
+                    let b = [], d = 1, j = i + 1;
+                    while (j < lines.length && d > 0) {
+                        if (lines[j].endsWith(":")) d++;
+                        if (lines[j] === "end") d--;
+                        if (d > 0) b.push(lines[j]);
+                        j++;
+                    }
+                    if (isIf) {
+                        if (cond === true || cond === "true") { if (await ex(b) === "BRK") return "BRK"; }
+                        else if (j < lines.length && lines[j] === "else:") {
+                            let eb = [], ed = 1; j++;
+                            while (j < lines.length && ed > 0) {
+                                if (lines[j].endsWith(":")) ed++;
+                                if (lines[j] === "end") ed--;
+                                if (ed > 0) eb.push(lines[j]);
+                                j++;
+                            }
+                            if (await ex(eb) === "BRK") return "BRK";
+                        }
+                    } else {
+                        for (let r = 0; r < (parseInt(cond) || 0); r++) if (await ex(b) === "BRK") break;
+                    }
+                    i = j - 1;
+                }
+            }
+        }
+
+        async function R() {
+            L.innerHTML = ''; V = {}; P.style.display = 'none';
+            let p = [], s = [0];
+            E.value.split('\n').forEach(line => {
+                if (!line.trim()) return;
+                let d = line.search(/\S/), t = line.trim();
+                while (d < s[s.length - 1]) { s.pop(); p.push("end"); }
+                if (t.endsWith(":")) s.push(d + 1);
+                p.push(t);
+            });
+            while (s.length > 1) { s.pop(); p.push("end"); }
+            await ex(p);
+        }
+    </script>
+</body>
+
+</html>
